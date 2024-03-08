@@ -32,5 +32,6 @@ urlpatterns = [
     path('basket/items/<int:pk>/qty/change',views.CartItemUpdateQuantityView.as_view(),name="qty-update"),
     path('checkout/',views.CheckOutView.as_view(),name="checkout"),
     path('signout/',views.SignOutView.as_view(),name="signout"),
-    # path('ordersummary/',views.OrderSummaryView.as_view(),name="order-summary"),
+    path('orders/summary/',views.OrderSummaryView.as_view(),name="order-summary"),
+    path('orders/item/<int:pk>/remove/',views.OrderItemRemoveView.as_view(),name="order-item-remove"),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -46,7 +46,9 @@ class SigninView(View):
                 return redirect("index")
         messages.error(request,"invalid credential")
         return render(request,"login.html",{"form":form})
-    
+
+
+@method_decorator([signin_required,never_cache],name="dispatch")
 class IndexView(View):
     def get(self,request,*args,**kwargs):
         qs=Product.objects.all()
@@ -172,4 +174,10 @@ class OrderSummaryView(View):
     def get(self,request,*args,**kwargs):
         qs=Order.objects.filter(user_object=request.user)
         return render(request,"ordersummary.html",{"data":qs})
-    
+
+# url : localhost:8000/orders/item/{id}/remove/   
+class OrderItemRemoveView(View):
+    def get(self,request,*args,**kwargs):
+        id=kwargs.get("pk")
+        OrderItems.objects.get(id=id).delete()
+        return redirect("order-summary")
