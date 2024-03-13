@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate,login,logout
 from django.contrib import messages
 from django.views.decorators.cache import never_cache
 from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 
 
 from Store.models import Product,BasketItem,Size,Order,OrderItems
@@ -174,7 +175,19 @@ class CheckOutView(View):
                 data = { "amount": order_obj.get_order_total*100, "currency": "INR", "receipt": "order_rcptid_11" }
                 payment = client.order.create(data=data)
                 print("payment initiating", payment)
+                context={
+                    "key":KEY_ID,
+                    "order_id":payment.get("id"),
+                    "amount":payment.get("amount")
+                }
+                return render(request,"payment.html",{"context":context})
             return redirect("index")
+        
+@method_decorator(csrf_exempt,name="dispatch")
+class PaymentVerificationView(View):
+    def post(self,request,*args,**kwargs):
+        print(request.POST)
+        return render(request,"success.html")
 
 @method_decorator([signin_required,never_cache],name="dispatch")
 class SignOutView(View):
@@ -194,3 +207,7 @@ class OrderItemRemoveView(View):
         OrderItems.objects.get(id=id).delete()
         return redirect("order-summary")
 
+
+
+    
+    
